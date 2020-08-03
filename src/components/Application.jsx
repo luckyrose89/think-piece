@@ -22,17 +22,13 @@ class Application extends Component {
     this.unsubscribe();
   };
 
-  handleCreate = async (post) => {
-    await firestore.collection("posts").doc(post.id).set(post);
-  };
-
   render() {
     const { posts } = this.state;
 
     return (
       <main className="Application">
         <h1>Think Piece</h1>
-        <Posts posts={posts} onCreate={this.handleCreate} />
+        <Posts posts={posts} />
       </main>
     );
   }
