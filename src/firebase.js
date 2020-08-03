@@ -21,4 +21,10 @@ export const firestore = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
 export const auth = firebase.auth();
+
+export const provider = new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" }); //enable pop up for sign in to google
+export const signInWithGoogle = () => auth.signInWithPopup(provider);
+export const signOut = () => auth.signOut();
+
 export default firebase;
