@@ -17,6 +17,12 @@ firebase.initializeApp(firebaseConfig);
 
 window.firebase = firebase;
 
+export const createUserProfileDocument = (user, additionaldata) => {
+  if (!user) return;
+
+  const userRef = firestore.doc(`users/${user.uid}`);
+};
+
 export const firestore = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
