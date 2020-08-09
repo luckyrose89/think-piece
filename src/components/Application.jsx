@@ -10,7 +10,9 @@ class Application extends Component {
   render() {
     return (
       <main className="Application">
-        <h1>Think Piece</h1>
+        <Link to="/">
+          <h1>Think Piece</h1>
+        </Link>
         <Authentication />
         <Switch>
           <Route exact path="/" component={Posts} />
