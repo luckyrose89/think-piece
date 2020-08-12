@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore"; // for the db
 import "firebase/auth"; // for the auth
+import "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -46,8 +47,7 @@ export const createUserProfileDocument = async (user, additionaldata) => {
 export const getUserDocument = async (uid) => {
   if (!uid) return null;
   try {
-    const userDocument = await firestore.collection("users").doc(uid).get();
-    return { uid, ...userDocument.data() };
+    return firestore.collection("users").doc(uid);
   } catch (error) {
     console.error("Error fetching user", error.message);
   }
@@ -57,6 +57,7 @@ export const firestore = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
 export const auth = firebase.auth();
+export const storage = firebase.storage();
 
 export const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" }); //enable pop up for sign in to google
