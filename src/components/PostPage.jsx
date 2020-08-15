@@ -4,6 +4,7 @@ import Comments from "./Comments";
 import Post from "./Post";
 import { firestore } from "../firebase";
 import { collectIdsAndDocs } from "../utilities";
+import { withRouter } from "react-router-dom";
 
 class PostPage extends Component {
   state = {
