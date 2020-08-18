@@ -12,9 +12,47 @@ class PostPage extends Component {
     comments: [],
   };
 
+  get postId() {
+    return this.props.match.params.id;
+  }
+
+  get postRef() {
+    return firestore.doc(`posts/${this.postId}`);
+  }
+
+  get commentsRef() {
+    return this.postRef.collection("comments");
+  }
+
+  unsubscribeFromPosts = null;
+  unsubscribeFromComments = null;
+
+  componentDidMount = async () => {
+    this.unsubscribeFromPosts = this.postRef.onSnapshot((snapShot) => {
+      const post = collectIdsAndDocs(snapShot);
+      this.setState({ post });
+    });
+
+    this.unsubscribeFromComments = this.commentsRef.onSnapshot((snapShot) => {
+      const comments = snapShot.docs.map(collectIdsAndDocs);
+      this.setState({ comments });
+    });
+  };
+
+  componentWillUnmount = () => {
+    this.unsubscribeFromPosts();
+    this.unsubscribeFromComments();
+  };
+
   render() {
-    return <div>Post Page!</div>;
+    const { post, comments } = this.state;
+    return (
+      <section>
+        {post && <Post {...post} />}
+        <Comments comments={comments} onCreate={() => {}} />
+      </section>
+    );
   }
 }
 
-export default PostPage;
+export default withRouter(PostPage);
