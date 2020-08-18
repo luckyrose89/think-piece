@@ -1,16 +1,15 @@
 import React, { Component } from "react";
 
-import Comments from "./Comments";
 import Post from "./Post";
+import Comments from "./Comments";
 import { firestore } from "../firebase";
 import { collectIdsAndDocs } from "../utilities";
+
 import { withRouter } from "react-router-dom";
+import withUser from "./withUser";
 
 class PostPage extends Component {
-  state = {
-    post: null,
-    comments: [],
-  };
+  state = { post: null, comments: [] };
 
   get postId() {
     return this.props.match.params.id;
@@ -24,35 +23,44 @@ class PostPage extends Component {
     return this.postRef.collection("comments");
   }
 
-  unsubscribeFromPosts = null;
+  unsubscribeFromPost = null;
   unsubscribeFromComments = null;
 
   componentDidMount = async () => {
-    this.unsubscribeFromPosts = this.postRef.onSnapshot((snapShot) => {
-      const post = collectIdsAndDocs(snapShot);
+    this.unsubscribeFromPost = this.postRef.onSnapshot((snapshot) => {
+      const post = collectIdsAndDocs(snapshot);
       this.setState({ post });
     });
 
-    this.unsubscribeFromComments = this.commentsRef.onSnapshot((snapShot) => {
-      const comments = snapShot.docs.map(collectIdsAndDocs);
+    this.unsubscribeFromComments = this.commentsRef.onSnapshot((snapshot) => {
+      const comments = snapshot.docs.map(collectIdsAndDocs);
       this.setState({ comments });
     });
   };
 
   componentWillUnmount = () => {
-    this.unsubscribeFromPosts();
+    this.unsubscribeFromPost();
     this.unsubscribeFromComments();
+  };
+
+  createComment = (comment) => {
+    const { user } = this.props;
+    this.commentsRef.add({
+      ...comment,
+      user,
+    });
   };
 
   render() {
     const { post, comments } = this.state;
+    console.log(this.props);
     return (
       <section>
         {post && <Post {...post} />}
-        <Comments comments={comments} onCreate={() => {}} />
+        <Comments comments={comments} onCreate={this.createComment} />
       </section>
     );
   }
 }
 
-export default withRouter(PostPage);
+export default withRouter(withUser(PostPage));
